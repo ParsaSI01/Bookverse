@@ -1,31 +1,80 @@
-<div class="container">
 
-    <h1 class="page-title">The Vintage Library</h1>
 
-    <div class="books">
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
 
-        <div class="book-card">
+<head>
+    <meta charset="UTF-8">
 
-            <img
-                class="book-cover"
-                src="..."
-                alt="Book Cover"
-            >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-            <h2 class="book-title">
-                The Great Gatsby
-            </h2>
+    <title>The Vintage Library</title>
 
-            <p class="author">
-                F. Scott Fitzgerald
-            </p>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
 
-            <a href="#" class="download-btn">
-                Download Book
-            </a>
+<body>
+
+    <header>
+        <div class="logo">
+            The Vintage Library
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <h1 class="page-title">
+            Discover Classic Books
+        </h1>
+
+
+        <div class="books">
+
+            {% for book in books %}
+
+                <div class="book-card">
+
+                    <img
+                        class="book-cover"
+                        src="{{ book.cover.url }}"
+                        alt="{{ book.title }}"
+                    >
+
+                    <h2 class="book-title">
+                        {{ book.title }}
+                    </h2>
+
+                    <p class="author">
+                        {{ book.author }}
+                    </p>
+
+                    <a
+                        href="{{ book.file.url }}"
+                        class="download-btn"
+                        download
+                    >
+                        Download Book
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p>No books available yet.</p>
+
+            {% endfor %}
 
         </div>
 
-    </div>
+    </main>
 
-</div>
+
+    <footer>
+        <p>© 2026 The Vintage Library</p>
+    </footer>
+
+</body>
+
+</html>
