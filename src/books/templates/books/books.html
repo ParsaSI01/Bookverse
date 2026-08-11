@@ -3,12 +3,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Books — Bookverse</title>
 
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
 <body>
@@ -37,9 +39,16 @@
             <a href="{% url 'book_detail' book.id %}" class="book-card">
 
                 <div class="book-image">
-                    <img src="{{ book.image.url }}" alt="{{ book.name }}">
-                </div>
 
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" alt="{{ book.name }}">
+                    {% else %}
+                        <div class="no-image">
+                            No cover available
+                        </div>
+                    {% endif %}
+
+                </div>
                 <div class="book-info">
 
                     <h2>{{ book.name }}</h2>
@@ -80,7 +89,6 @@
     </div>
 
 </main>
-
 </body>
 </html>
 
