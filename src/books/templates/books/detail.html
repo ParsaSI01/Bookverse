@@ -1,0 +1,82 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ book.name }} — Bookverse</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="{% url 'home' %}" class="logo">Bookverse</a>
+
+    <div class="nav-links">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'book_list' %}">Books</a>
+    </div>
+</nav>
+
+<main class="detail-page">
+
+    <div class="detail-card">
+
+        <div class="detail-image">
+            <img src="{{ book.image.url }}" alt="{{ book.name }}">
+        </div>
+
+        <div class="detail-info">
+
+            <p class="eyebrow">BOOKVERSE</p>
+
+            <h1>{{ book.name }}</h1>
+
+            <p class="author">
+                By {{ book.author }}
+            </p>
+
+            <p class="description">
+                {{ book.description }}
+            </p>
+
+            <div class="detail-meta">
+
+                    <span>
+                        {{ book.views }} views
+                    </span>
+
+                {% if book.is_audiobook %}
+                    <span>Audiobook</span>
+                {% endif %}
+
+            </div>
+
+            <div class="detail-price">
+                {{ book.get_price }}
+            </div>
+
+            {% if book.is_audiobook and book.audio %}
+                <div class="audio-player">
+                    <h3>Listen to the audiobook</h3>
+
+                    <audio controls>
+                        <source src="{{ book.audio.url }}">
+                        Your browser does not support audio playback.
+                    </audio>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+</body>
+</html>
