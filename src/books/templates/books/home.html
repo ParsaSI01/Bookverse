@@ -2,86 +2,249 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
+    <link
+        rel="icon"
+        type="image/x-icon"
+        href="{% static 'img/favicon.ico' %}"
+    >
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Bookverse</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
 </head>
 
 <body>
 
 <nav class="navbar">
-    <a href="{% url 'home' %}" class="logo">Bookverse</a>
+
+    <a
+        href="{% url 'home' %}"
+        class="logo"
+    >
+        <span class="logo-icon">⌕</span>
+        Bookverse
+    </a>
 
     <div class="nav-links">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'book_list' %}">Books</a>
+
+        <a
+            href="{% url 'home' %}"
+            class="active"
+        >
+            Home
+        </a>
+
+        <a href="{% url 'book_list' %}">
+            Books
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a href="{% url 'my_books' %}">
+                My Books
+            </a>
+
+        {% endif %}
+
+        <a href="{% url 'cart' %}">
+            Cart
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a
+                href="{% url 'profile' %}"
+                class="nav-button"
+            >
+                Profile
+            </a>
+
+        {% else %}
+
+            <a
+                href="{% url 'login' %}"
+                class="nav-button"
+            >
+                Sign in
+            </a>
+
+        {% endif %}
+
     </div>
+
 </nav>
+
 
 <main class="home-page">
 
     <section class="hero">
-        <div>
-            <p class="eyebrow">WELCOME TO BOOKVERSE</p>
 
-            <h1>Your world of books.</h1>
+        <div class="hero-content">
 
-            <p>
+            <p class="eyebrow">
+                WELCOME TO BOOKVERSE
+            </p>
+
+            <h1>
+                Your world of books.
+            </h1>
+
+            <p class="hero-description">
                 Discover books worth reading and find your next
                 favorite story.
             </p>
 
-            <a href="{% url 'book_list' %}" class="button">
-                Browse Books
-            </a>
+            <div class="hero-actions">
+
+                <a
+                    href="{% url 'book_list' %}"
+                    class="button"
+                >
+                    Browse Books
+                </a>
+
+                {% if user.is_authenticated %}
+
+                    <a
+                        href="{% url 'my_books' %}"
+                        class="button button-light"
+                    >
+                        My Books
+                    </a>
+
+                {% endif %}
+
+            </div>
+
         </div>
+
+
+        <div class="hero-decoration">
+
+            <div class="hero-circle"></div>
+
+            <div class="floating-book book-one"></div>
+            <div class="floating-book book-two"></div>
+            <div class="floating-book book-three"></div>
+
+        </div>
+
     </section>
+
 
     <section class="featured">
 
         <div class="section-header">
-            <h2>Featured Books</h2>
-            <a href="{% url 'book_list' %}">View all</a>
+
+            <div>
+
+                <p class="eyebrow">
+                    A LITTLE SOMETHING FOR YOU
+                </p>
+
+                <h2>
+                    Featured Books
+                </h2>
+
+            </div>
+
+            <a
+                href="{% url 'book_list' %}"
+                class="view-all"
+            >
+                View all
+                <span>→</span>
+            </a>
+
         </div>
+
 
         <div class="book-grid">
 
             {% for book in books|slice:":4" %}
 
-                <a href="{% url 'book_detail' book.id %}" class="book-card">
+                <a
+                    href="{% url 'book_detail' book.id %}"
+                    class="book-card"
+                >
 
                     <div class="book-image">
-                        <img src="{{ book.image.url }}" alt="{{ book.name }}">
+
+                        {% if book.image %}
+
+                            <img
+                                src="{{ book.image.url }}"
+                                alt="{{ book.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="no-image">
+                                No cover available
+                            </div>
+
+                        {% endif %}
+
                     </div>
 
+
                     <div class="book-info">
-                        <h3>{{ book.name }}</h3>
+
+                        <h3>
+                            {{ book.name }}
+                        </h3>
 
                         <p class="author">
-                            By {{ book.author }}
+                            By {{ book.author|default:"Unknown author" }}
                         </p>
 
                         <div class="book-bottom">
-                                <span class="price">
-                                    {{ book.get_price }}
-                                </span>
+
+                            <span class="price">
+                                {{ book.get_price }}
+                            </span>
 
                             <span class="views">
-                                    {{ book.views }} views
-                                </span>
+                                {{ book.views }} views
+                            </span>
+
                         </div>
+
                     </div>
 
                 </a>
 
             {% empty %}
 
-                <p>No books available yet.</p>
+                <div class="empty-books">
+
+                    <div class="empty-icon">
+                        📚
+                    </div>
+
+                    <h2>
+                        No books available yet
+                    </h2>
+
+                    <p>
+                        Check back later for new books.
+                    </p>
+
+                </div>
 
             {% endfor %}
 
@@ -90,6 +253,6 @@
     </section>
 
 </main>
+
 </body>
 </html>
-

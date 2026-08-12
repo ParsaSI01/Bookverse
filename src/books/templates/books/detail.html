@@ -2,81 +2,255 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
+    <link
+        rel="icon"
+        type="image/x-icon"
+        href="{% static 'img/favicon.ico' %}"
+    >
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>{{ book.name }} — Bookverse</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
 </head>
 
 <body>
 
 <nav class="navbar">
-    <a href="{% url 'home' %}" class="logo">Bookverse</a>
+
+    <a
+        href="{% url 'home' %}"
+        class="logo"
+    >
+        Bookverse
+    </a>
 
     <div class="nav-links">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'book_list' %}">Books</a>
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+        <a href="{% url 'book_list' %}">
+            Books
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a href="{% url 'my_books' %}">
+                My Books
+            </a>
+
+        {% endif %}
+
+        <a href="{% url 'cart' %}">
+            Cart
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a
+                href="{% url 'profile' %}"
+                class="nav-button"
+            >
+                Profile
+            </a>
+
+        {% else %}
+
+            <a
+                href="{% url 'login' %}"
+                class="nav-button"
+            >
+                Sign in
+            </a>
+
+        {% endif %}
+
     </div>
+
 </nav>
+
 
 <main class="detail-page">
 
-    <div class="detail-card">
+    <a
+        href="{% url 'book_list' %}"
+        class="back-link"
+    >
+        ← Back to books
+    </a>
 
-        <div class="detail-image">
-            <img src="{{ book.image.url }}" alt="{{ book.name }}">
-        </div>
 
-        <div class="detail-info">
+    <section class="detail-card">
 
-            <p class="eyebrow">BOOKVERSE</p>
 
-            <h1>{{ book.name }}</h1>
+        <div class="detail-cover-section">
 
-            <p class="author">
-                By {{ book.author }}
-            </p>
+            <div class="detail-image">
 
-            <p class="description">
-                {{ book.description }}
-            </p>
+                {% if book.image %}
 
-            <div class="detail-meta">
+                    <img
+                        src="{{ book.image.url }}"
+                        alt="{{ book.name }}"
+                    >
 
-                    <span>
-                        {{ book.views }} views
-                    </span>
+                {% else %}
 
-                {% if book.is_audiobook %}
-                    <span>Audiobook</span>
+                    <div class="detail-no-image">
+
+                        <span>⌕</span>
+
+                        No cover available
+
+                    </div>
+
                 {% endif %}
 
             </div>
 
-            <div class="detail-price">
-                {{ book.get_price }}
+        </div>
+
+
+        <div class="detail-info">
+
+            <p class="eyebrow">
+                BOOKVERSE
+            </p>
+
+
+            <h1>
+                {{ book.name }}
+            </h1>
+
+
+            <p class="detail-author">
+                By {{ book.author|default:"Unknown author" }}
+            </p>
+
+
+            <div class="detail-meta">
+
+                <span>
+                    {{ book.views }} views
+                </span>
+
+                {% if book.is_audiobook %}
+
+                    <span>
+                        Audiobook
+                    </span>
+
+                {% else %}
+
+                    <span>
+                        PDF
+                    </span>
+
+                {% endif %}
+
+
+                {% if is_owned %}
+
+                    <span class="owned-badge">
+                        Owned
+                    </span>
+
+                {% endif %}
+
             </div>
 
-            {% if book.is_audiobook and book.audio %}
-                <div class="audio-player">
-                    <h3>Listen to the audiobook</h3>
 
-                    <audio controls>
-                        <source src="{{ book.audio.url }}">
-                        Your browser does not support audio playback.
-                    </audio>
+            <div class="detail-divider"></div>
+
+
+            <div class="detail-description">
+
+                <h2>
+                    About this book
+                </h2>
+
+                <p>
+                    {{ book.description }}
+                </p>
+
+            </div>
+
+
+            <div class="detail-purchase">
+
+
+                <div class="detail-price">
+
+                    {% if is_owned %}
+
+                        Owned
+
+                    {% else %}
+
+                        {{ book.get_price }}
+
+                    {% endif %}
+
                 </div>
-            {% endif %}
+
+
+                {% if is_owned %}
+
+                    <a
+                        href="{% url 'book_reader' book.id %}"
+                        class="button detail-cart-button"
+                    >
+                        {% if book.is_audiobook %}
+                            Listen Now
+                        {% else %}
+                            Read Book
+                        {% endif %}
+                    </a>
+
+
+                {% else %}
+
+                    <form
+                        method="post"
+                        action="{% url 'add_to_cart' book.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="button detail-cart-button"
+                        >
+                            Add to Cart
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
 
 </main>
+
 </body>
+
 </html>

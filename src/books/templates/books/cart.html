@@ -1,0 +1,337 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link
+        rel="icon"
+        type="image/x-icon"
+        href="{% static 'img/favicon.ico' %}"
+    >
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Your Cart — Bookverse</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <a
+        href="{% url 'home' %}"
+        class="logo"
+    >
+        <span class="logo-icon">⌕</span>
+        Bookverse
+    </a>
+
+    <div class="nav-links">
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+        <a href="{% url 'book_list' %}">
+            Books
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a href="{% url 'my_books' %}">
+                My Books
+            </a>
+
+        {% endif %}
+
+        <a
+            href="{% url 'cart' %}"
+            class="active"
+        >
+            Cart
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a
+                href="{% url 'profile' %}"
+                class="nav-button"
+            >
+                Profile
+            </a>
+
+        {% else %}
+
+            <a
+                href="{% url 'login' %}"
+                class="nav-button"
+            >
+                Sign in
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+<main class="cart-page">
+
+    <div class="page-header">
+
+        <p class="eyebrow">
+            YOUR LIBRARY
+        </p>
+
+        <h1>
+            Shopping cart
+        </h1>
+
+        <p>
+            Your books are waiting for you.
+        </p>
+
+    </div>
+
+
+    {% if items %}
+
+        <div class="cart-layout">
+
+
+            <section class="cart-items">
+
+                {% for item in items %}
+
+                    <article class="cart-item">
+
+                        <a
+                            href="{% url 'book_detail' item.book.id %}"
+                            class="cart-item-image"
+                        >
+
+                            {% if item.book.image %}
+
+                                <img
+                                    src="{{ item.book.image.url }}"
+                                    alt="{{ item.book.name }}"
+                                >
+
+                            {% else %}
+
+                                <div class="no-image">
+                                    No cover
+                                </div>
+
+                            {% endif %}
+
+                        </a>
+
+
+                        <div class="cart-item-info">
+
+                            <a
+                                href="{% url 'book_detail' item.book.id %}"
+                            >
+
+                                <h2>
+                                    {{ item.book.name }}
+                                </h2>
+
+                            </a>
+
+                            <p class="author">
+                                By {{ item.book.author|default:"Unknown author" }}
+                            </p>
+
+                            <p class="cart-item-price">
+                                {{ item.book.price }}
+                            </p>
+
+                        </div>
+
+
+                        <form
+                            method="post"
+                            action="{% url 'update_cart' item.book.id %}"
+                            class="quantity-form"
+                        >
+
+                            {% csrf_token %}
+
+                            <label>
+                                Quantity
+                            </label>
+
+                            <input
+                                type="number"
+                                name="quantity"
+                                value="{{ item.quantity }}"
+                                min="1"
+                                max="99"
+                            >
+
+                            <button
+                                type="submit"
+                                class="text-button"
+                            >
+                                Update
+                            </button>
+
+                        </form>
+
+
+                        <div class="cart-item-total">
+
+                            <strong>
+                                {{ item.subtotal }}
+                            </strong>
+
+                            <form
+                                method="post"
+                                action="{% url 'remove_from_cart' item.book.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="remove-button"
+                                >
+                                    Remove
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+
+            <aside class="cart-summary">
+
+                <p class="eyebrow">
+                    ORDER SUMMARY
+                </p>
+
+                <h2>
+                    Your order
+                </h2>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Books
+                    </span>
+
+                    <span>
+                        {{ total_items }}
+                    </span>
+
+                </div>
+
+
+                <div class="summary-divider"></div>
+
+
+                <div class="summary-row summary-total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        {{ total }}
+                    </strong>
+
+                </div>
+
+
+                {% if user.is_authenticated %}
+
+                    <form
+                        method="post"
+                        action="{% url 'checkout' %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="button checkout-button"
+                        >
+                            Complete Purchase
+                        </button>
+
+                    </form>
+
+                    <p class="checkout-note">
+                        This demo purchase will add the
+                        books to your My Books library.
+                    </p>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'login' %}?next={% url 'cart' %}"
+                        class="button checkout-button"
+                    >
+                        Sign in to continue
+                    </a>
+
+                {% endif %}
+
+            </aside>
+
+        </div>
+
+    {% else %}
+
+        <section class="empty-cart">
+
+            <div class="empty-cart-icon">
+                🛒
+            </div>
+
+            <h2>
+                Your cart is empty
+            </h2>
+
+            <p>
+                There are plenty of good stories waiting for you.
+            </p>
+
+            <a
+                href="{% url 'book_list' %}"
+                class="button"
+            >
+                Browse Books
+            </a>
+
+        </section>
+
+    {% endif %}
+
+</main>
+
+</body>
+</html>

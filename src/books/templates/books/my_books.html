@@ -1,0 +1,207 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link
+        rel="icon"
+        type="image/x-icon"
+        href="{% static 'img/favicon.ico' %}"
+    >
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Books — Bookverse</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <a
+        href="{% url 'home' %}"
+        class="logo"
+    >
+        Bookverse
+    </a>
+
+    <div class="nav-links">
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+        <a href="{% url 'book_list' %}">
+            Books
+        </a>
+
+        <a
+            href="{% url 'my_books' %}"
+            class="active"
+        >
+            My Books
+        </a>
+
+        <a href="{% url 'cart' %}">
+            Cart
+        </a>
+
+        <a
+            href="{% url 'profile' %}"
+            class="nav-button"
+        >
+            Profile
+        </a>
+
+    </div>
+
+</nav>
+
+
+<main class="books-page">
+
+    <div class="page-header">
+
+        <p class="eyebrow">
+            YOUR COLLECTION
+        </p>
+
+        <h1>
+            My Books
+        </h1>
+
+        <p>
+            Your personal library.
+        </p>
+
+    </div>
+
+
+    <div class="book-grid">
+
+        {% for book in books %}
+
+            <a
+                href="{% url 'book_reader' book.id %}"
+                class="book-card owned-book-card"
+            >
+
+                <div class="book-image">
+
+                    {% if book.image %}
+
+                        <img
+                            src="{{ book.image.url }}"
+                            alt="{{ book.name }}"
+                        >
+
+                    {% else %}
+
+                        <div class="no-image">
+                            No cover available
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="book-info">
+
+                    <h2>
+                        {{ book.name }}
+                    </h2>
+
+                    <p class="author">
+                        By {{ book.author|default:"Unknown author" }}
+                    </p>
+
+
+                    <div class="my-book-status">
+
+                        <span class="owned-badge">
+                            Owned
+                        </span>
+
+                        {% if book.is_audiobook %}
+
+                            <span class="audio-badge">
+                                Audio
+                            </span>
+
+                        {% else %}
+
+                            <span class="book-type-badge">
+                                PDF
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="owned-book-action">
+
+                        {% if book.is_audiobook %}
+
+                            Listen Now →
+
+                        {% else %}
+
+                            Read Now →
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        {% empty %}
+
+            <div class="empty-books">
+
+                <div class="empty-icon">
+                    📚
+                </div>
+
+                <h2>
+                    Your library is empty
+                </h2>
+
+                <p>
+                    Books you purchase will appear here.
+                </p>
+
+                <a
+                    href="{% url 'book_list' %}"
+                    class="button"
+                >
+                    Explore Books
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

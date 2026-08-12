@@ -12,8 +12,22 @@ class Book(models.Model):
 
     price = models.PositiveIntegerField(default=0)
 
-    image = models.ImageField(upload_to="book_images/", blank=True)
-    audio = models.FileField(upload_to="book_audio/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="book_images/",
+        blank=True
+    )
+
+    audio = models.FileField(
+        upload_to="book_audio/",
+        blank=True,
+        null=True
+    )
+
+    pdf = models.FileField(
+        upload_to="book_pdfs/",
+        blank=True,
+        null=True
+    )
 
     views = models.PositiveIntegerField(default=0)
 
@@ -23,4 +37,5 @@ class Book(models.Model):
     def get_price(self):
         if self.price == 0:
             return "Free"
+
         return self.price

@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Log in — Bookverse</title>
+    <title>Sign up — Bookverse</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
@@ -37,8 +37,8 @@
             Books
         </a>
 
-        <a href="{% url 'signup' %}" class="nav-button">
-            Sign up
+        <a href="{% url 'login' %}">
+            Log in
         </a>
 
     </div>
@@ -48,26 +48,27 @@
 
 <main class="auth-page">
 
+
     <div class="auth-card">
 
 
         <div class="auth-icon">
-            📖
+            ✨
         </div>
 
 
         <div class="auth-header">
 
             <p class="eyebrow">
-                WELCOME BACK
+                JOIN BOOKVERSE
             </p>
 
             <h1>
-                Log in
+                Create an account
             </h1>
 
             <p>
-                Welcome back to Bookverse.
+                Join Bookverse and start exploring.
             </p>
 
         </div>
@@ -87,46 +88,41 @@
             {% endif %}
 
 
-            <div class="form-group">
+            {% for field in form %}
 
-                <label for="{{ form.username.id_for_label }}">
-                    Username
-                </label>
+                <div class="form-group">
 
-                {{ form.username }}
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
 
-                {% if form.username.errors %}
-
-                    <div class="field-error">
-                        {{ form.username.errors }}
-                    </div>
-
-                {% endif %}
-
-            </div>
+                    {{ field }}
 
 
-            <div class="form-group">
+                    {% if field.help_text %}
 
-                <label for="{{ form.password.id_for_label }}">
-                    Password
-                </label>
+                        <small class="help-text">
+                            {{ field.help_text }}
+                        </small>
 
-                {{ form.password }}
+                    {% endif %}
 
-                {% if form.password.errors %}
 
-                    <div class="field-error">
-                        {{ form.password.errors }}
-                    </div>
+                    {% if field.errors %}
 
-                {% endif %}
+                        <div class="field-error">
+                            {{ field.errors }}
+                        </div>
 
-            </div>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
 
 
             <button type="submit" class="auth-button">
-                Log in
+                Create account
             </button>
 
         </form>
@@ -135,17 +131,18 @@
         <div class="auth-footer">
 
             <span>
-                Don't have an account?
+                Already have an account?
             </span>
 
-            <a href="{% url 'signup' %}">
-                Sign up
+            <a href="{% url 'login' %}">
+                Log in
             </a>
 
         </div>
 
 
     </div>
+
 
 </main>
 

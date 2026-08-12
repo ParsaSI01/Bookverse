@@ -1,0 +1,139 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit profile — Bookverse</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+
+<body>
+
+<nav class="navbar">
+
+    <a href="{% url 'home' %}" class="logo">
+        <span class="logo-icon">📖</span>
+        Bookverse
+    </a>
+
+
+    <div class="nav-links">
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+        <a href="{% url 'book_list' %}">
+            Books
+        </a>
+
+        <a href="{% url 'profile' %}" class="active">
+            Profile
+        </a>
+
+    </div>
+
+</nav>
+
+
+<main class="profile-page">
+
+
+    <div class="page-header">
+
+        <p class="eyebrow">
+            YOUR ACCOUNT
+        </p>
+
+        <h1>
+            Edit profile.
+        </h1>
+
+        <p>
+            Update your account information.
+        </p>
+
+    </div>
+
+
+
+    <section class="profile-card edit-profile-card">
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            {% for field in form %}
+
+                <div class="form-group">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+
+                    {% if field.errors %}
+
+                        <div class="field-error">
+                            {{ field.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="profile-actions">
+
+                <button type="submit" class="button">
+                    Save changes
+                </button>
+
+                <a
+                    href="{% url 'profile' %}"
+                    class="text-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+
+        </form>
+
+
+    </section>
+
+
+</main>
+
+<script src="{% static 'js/navbar.js' %}" defer></script>
+<script src="{% static 'js/profile.js' %}" defer></script>
+</body>
+
+</html>

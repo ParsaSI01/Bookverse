@@ -1,0 +1,346 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ book.name }} — Bookverse</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+<body
+    class="reader-body"
+    data-pdf="{% if book.pdf %}{{ book.pdf.url }}{% endif %}"
+>
+
+
+<header class="reader-header">
+
+    <div class="reader-header-left">
+
+        <a
+            href="{% url 'my_books' %}"
+            class="reader-back"
+        >
+            ← My Books
+        </a>
+
+        <div class="reader-title">
+
+            <span>
+                {{ book.name }}
+            </span>
+
+            <small>
+                {{ book.author }}
+            </small>
+
+        </div>
+
+    </div>
+
+
+    {% if book.is_audiobook %}
+
+        <span class="reader-type">
+            AUDIOBOOK
+        </span>
+
+    {% else %}
+
+        <span class="reader-type">
+            BOOK
+        </span>
+
+    {% endif %}
+
+</header>
+
+
+{% if book.is_audiobook and book.audio %}
+
+    <main class="audio-reader">
+
+        <div class="audio-cover">
+
+            {% if book.image %}
+
+                <img
+                    src="{{ book.image.url }}"
+                    alt="{{ book.name }}"
+                >
+
+            {% else %}
+
+                <div class="audio-cover-empty">
+                    🎧
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="audio-reader-info">
+
+            <p class="eyebrow">
+                NOW PLAYING
+            </p>
+
+            <h1>
+                {{ book.name }}
+            </h1>
+
+            <p>
+                {{ book.author }}
+            </p>
+
+
+            <audio
+                id="audio-source"
+                preload="metadata"
+            >
+
+                <source
+                    src="{{ book.audio.url }}"
+                >
+
+            </audio>
+
+
+            <div class="custom-audio-player">
+
+                <div class="audio-progress">
+
+                    <span id="audio-current">
+                        0:00
+                    </span>
+
+                    <input
+                        type="range"
+                        id="audio-progress"
+                        min="0"
+                        max="100"
+                        value="0"
+                    >
+
+                    <span id="audio-duration">
+                        0:00
+                    </span>
+
+                </div>
+
+
+                <div class="audio-controls">
+
+                    <button
+                        type="button"
+                        id="audio-back"
+                        class="audio-control"
+                    >
+                        −10
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="audio-play"
+                        class="audio-play"
+                    >
+                        ▶
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="audio-forward"
+                        class="audio-control"
+                    >
+                        +10
+                    </button>
+
+                </div>
+
+
+                <div class="audio-volume">
+
+                    <span>
+                        Volume
+                    </span>
+
+                    <input
+                        type="range"
+                        id="audio-volume"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="1"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+{% elif book.pdf %}
+
+    <main class="pdf-reader">
+
+        <div class="pdf-toolbar">
+
+            <div class="pdf-navigation">
+
+                <button
+                    type="button"
+                    id="pdf-prev"
+                    class="reader-button"
+                >
+                    ←
+                </button>
+
+                <span>
+
+                    Page
+
+                    <strong id="pdf-page-number">
+                        1
+                    </strong>
+
+                    /
+
+                    <strong id="pdf-page-count">
+                        —
+                    </strong>
+
+                </span>
+
+                <button
+                    type="button"
+                    id="pdf-next"
+                    class="reader-button"
+                >
+                    →
+                </button>
+
+            </div>
+
+
+            <div class="pdf-zoom">
+
+                <button
+                    type="button"
+                    id="pdf-zoom-out"
+                    class="reader-button"
+                >
+                    −
+                </button>
+
+                <span id="pdf-zoom-value">
+                    100%
+                </span>
+
+                <button
+                    type="button"
+                    id="pdf-zoom-in"
+                    class="reader-button"
+                >
+                    +
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="pdf-stage"
+            id="pdf-stage"
+        >
+
+            <div
+                class="pdf-loading"
+                id="pdf-loading"
+            >
+                Loading book...
+            </div>
+
+            <canvas
+                id="pdf-canvas"
+            ></canvas>
+
+        </div>
+
+    </main>
+
+
+{% else %}
+
+    <main class="reader-empty">
+
+        <div>
+
+            <div class="empty-icon">
+                📖
+            </div>
+
+            <h1>
+                This book has no content yet.
+            </h1>
+
+            <p>
+                The book has been published but no PDF or
+                audio file has been uploaded.
+            </p>
+
+            <a
+                href="{% url 'my_books' %}"
+                class="button"
+            >
+                Back to My Books
+            </a>
+
+        </div>
+
+    </main>
+
+{% endif %}
+
+
+{% if book.is_audiobook and book.audio %}
+
+    <script src="{% static 'js/reader.js' %}"></script>
+
+{% elif book.pdf %}
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
+        type="module"
+    ></script>
+
+    <script
+        type="module"
+        src="{% static 'js/reader.js' %}"
+    ></script>
+
+{% endif %}
+
+</body>
+
+</html>
